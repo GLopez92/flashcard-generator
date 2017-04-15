@@ -1,3 +1,49 @@
+var inquirer = require("inquirer");
+
+var cards = [];
+
+var flashcards = function() {
+  inquirer.prompt([
+  {
+    name: "action",
+    type: "list",
+    message: "What kind of card are you making?",
+    choices: ["Basic Card", "Cloze Card"]
+  },
+  { // get front
+  	name: "front",
+  	type: "input",
+  	message: "What is the Front of the card?",
+  },
+  { // get back
+  	name: "back",
+  	type: "input",
+  	message: "What is the Back of the card?",
+  }
+  ]).then(function(answer) {
+
+  	var newCard;
+
+    switch (answer.action) {
+      case "Basic Card":
+		newCard = new BasicCards(answer.front, answer.back);
+		newCard.getFront();
+		newCard.getBack();
+        break;
+
+      case "Cloze Card":
+      	newCard = new ClozeCards(answer.front, answer.back);
+      	newCard.partial();
+      	newcard.getCloze();
+      	newCard.fulltext();
+      	break;
+    }
+
+    cards.push(newCard);
+  });
+};
+
+
 function BasicCards(front, back) {
 	  this.front = front;
 	  this.back = back;
@@ -9,6 +55,8 @@ function ClozeCards(text, cloze) {
 
 	  this.text = text;
 	  this.cloze = cloze;
+	  this.error();
+
 	  // this.fullText = function(){
 	  // 	return this.text
 	  // }
@@ -31,25 +79,34 @@ function ClozeCards(text, cloze) {
 
 }
 
+BasicCards.prototype.getFront = function(){
+	console.log(this.front);
+};
+
+BasicCards.prototype.getBack = function(){
+	console.log(this.back);
+};
+
 ClozeCards.prototype.fullText = function() {
-	return this.text
+	console.log(this.text);
 };
 
 ClozeCards.prototype.getCloze = function() {
-	return this.cloze
+	console.log(this.cloze);
 };
 
 ClozeCards.prototype.partial = function() {
 	var partialText = this.text.replace(this.cloze, "...");
-	return partialText
+	console.log(partialText);
 };
 
-// ClozeCards.prototype.error = function() {
-// 	if(!(response === answer)){
-// 	  		console.log("Error: Enter correct information");
-// 	  	}
+ClozeCards.prototype.error = function(response,answer) {
 
-// };
+	if(!(response === answer)){
+	  		console.log("Error: Enter correct information");
+	  	}
+
+};
 
 
 
@@ -57,20 +114,20 @@ ClozeCards.prototype.partial = function() {
 var firstPresident = new BasicCards(
     "Who was the first president of the United States?", "George Washington");
 
-"Who was the first president of the United States?"
-console.log(firstPresident.front); 
+// "Who was the first president of the United States?"
+// console.log(firstPresident.front); 
 
-"George Washington"
-console.log(firstPresident.back); 
+// "George Washington"
+// console.log(firstPresident.back); 
 
 var firstPresidentCloze = new ClozeCards(
     "George Washington was the first president of the United States.", "George Washington");
 
-
-firstPresidentCloze.fullText();
+flashcards();
+// firstPresidentCloze.fullText();
 // firstPresidentCloze.error();
-firstPresidentCloze.getCloze();
-firstPresidentCloze.partial();
+// firstPresidentCloze.getCloze();
+// firstPresidentCloze.partial();
 
 
 // // "George Washington"
@@ -83,7 +140,6 @@ firstPresidentCloze.partial();
 // console.log(firstPresidentCloze.fullText());
 
 
-// // Should throw or log an error because "oops" doesn't appear in "This doesn't work"
-// brokenCloze.prototype = ("This doesn't work", "oops"); 
-
-// firstPresidentCloze.brokenCloze.start();
+// // // Should throw or log an error because "oops" doesn't appear in "This doesn't work"
+// var brokenCloze = ("This doesn't work", "oops");
+// firstPresidentCloze.brokenCloze.error();
